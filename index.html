@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Let's Talk About Your Zzzs: Part I</title>
+<style>
+:root{--bg:#12143a;--panel:#1c1f52;--line:#3a3f8f;--ink:#eef0ff;--mute:#a9aee0;--star:#ffc857;--teal:#5ed3c4;--rose:#ff8fa3;--ok:#7be0a0}
+@media(prefers-color-scheme:light){:root{--bg:#f1f2ff;--panel:#fff;--line:#c9cdf5;--ink:#161840;--mute:#555a99;--star:#b87900;--teal:#0a8577;--rose:#c4344f;--ok:#17803f}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.6 "Nunito","Trebuchet MS",system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:0 20px 80px}
+#bar{position:fixed;top:0;left:0;height:5px;width:0;background:var(--star);z-index:9}
+h1{font-size:clamp(2.2rem,7vw,3.6rem);line-height:1.1;margin:0 0 16px;font-weight:800}
+h2{font-size:1.7rem;margin:0 0 8px;line-height:1.2}
+p{margin:0 0 14px;max-width:62ch}
+section{padding:56px 0 8px;border-top:1px solid var(--line)}
+header{padding:80px 0 48px}
+.mute{color:var(--mute)}
+.card{background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:18px;margin:16px 0}
+button{font:inherit;font-weight:700;color:var(--ink);background:transparent;border:2px solid var(--line);border-radius:10px;padding:6px 14px;cursor:pointer}
+button:hover{border-color:var(--star)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--star);outline-offset:2px}
+button.on{background:var(--star);color:#12143a;border-color:var(--star)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.msg{min-height:1.6em;margin-top:10px;font-weight:700}
+.good{color:var(--ok)}.bad{color:var(--rose)}
+.say{border-left:5px solid var(--teal);padding:4px 0 4px 14px;margin:16px 0;color:var(--mute)}
+details{margin:12px 0}summary{cursor:pointer;color:var(--teal);font-weight:700}
+code{font:0.9rem ui-monospace,Menlo,Consolas,monospace;background:rgba(127,127,255,.18);padding:2px 7px;border-radius:6px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{color:var(--mute)}
+.tag.right{background:rgba(123,224,160,.2)}.tag.wrong{background:rgba(255,143,163,.25)}
+.dots{display:flex;flex-wrap:wrap;gap:3px;margin:12px 0}
+.dots i{width:12px;height:12px;border-radius:50%;display:block;transition:background .3s}
+.d-ins{background:var(--star)}.d-apn{background:var(--teal)}.d-non{background:#8a90d8}
+.d-blank{border:2px dashed var(--mute)}.d-train{background:var(--star)}.d-test{background:var(--rose)}
+.legend span{margin-right:14px;font-size:.9rem}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.pill{display:inline-block;border:2px solid var(--line);border-radius:999px;padding:2px 12px;margin:3px;font-weight:700}
+.q{margin:18px 0}.q .row{margin-top:8px}
+input[type=range]{width:100%;accent-color:var(--star)}
+.hero-chips .pill{border-color:var(--star)}
+a.btn{display:inline-block;background:var(--star);color:#12143a;font-weight:800;padding:12px 22px;border-radius:12px;text-decoration:none}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.dots i{transition:none}}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<main>
+
+<header>
+  <p class="mute">Machine Learning, Part I of II</p>
+  <h1>Can a computer guess who has trouble sleeping?</h1>
+  <p>Today we teach a computer to look at clues about a person and pick one of three answers:</p>
+  <div class="hero-chips"><span class="pill">None</span><span class="pill">Insomnia</span><span class="pill">Sleep Apnea</span></div>
+  <p style="margin-top:18px">Before a computer can learn, the data must be ready. In Part I we get it ready, in 5 steps. Scroll down and try every activity.</p>
+</header>
+
+<section id="s1">
+  <h2>Step 0: What is classification?</h2>
+  <p><b>Classification</b> means sorting something into a category. The computer looks at clues and puts the thing in one box.</p>
+  <div class="card" id="sort"></div>
+  <div class="say">Classification asks "<b>which category?</b>" A different kind of ML, <b>regression</b>, asks "<b>how much?</b>" (for example, predicting the exact hours someone sleeps). Our project is classification.</div>
+</section>
+
+<section id="s2">
+  <h2>Step 1: Meet the data</h2>
+  <p>Our real dataset has <b>374 people</b> (rows) and <b>13 columns</b>. One row is one person. One column is one fact. Below is a tiny made-up sample.</p>
+  <p>Tell the computer what kind of data each column holds: <b>Number</b> or <b>Words</b>.</p>
+  <div class="card scroll"><table id="tbl"></table><div class="msg" id="tblmsg"></div></div>
+  <details><summary>What we'll type in Colab</summary>
+    <p><code>df.head()</code> shows the first rows. <code>df.shape</code> tells us how many rows and columns. <code>df.info()</code> shows each column's type.</p></details>
+</section>
+
+<section id="s3">
+  <h2>Step 2: Missing values</h2>
+  <p>A computer can't do maths on an empty cell. In our data, <b>219 of 374 people</b> have a blank Sleep Disorder. Each dot is one person. What should we do?</p>
+  <div class="card">
+    <div class="row"><button data-m="del">Delete blank rows</button><button data-m="none">Fill with "None"</button><button data-m="ins">Fill with "Insomnia"</button><button data-m="reset">Reset</button></div>
+    <div class="dots" id="miss"></div>
+    <div class="legend"><span><i class="d-blank"></i>blank</span><span><i class="d-non"></i>None</span><span><i class="d-ins"></i>Insomnia</span><span><i class="d-apn"></i>Sleep Apnea</span></div>
+    <div class="msg" id="missmsg">Pick an option and watch the dots.</div>
+  </div>
+  <div class="say">The notebook fills blanks with <b>"None"</b>: a blank means "no sleep disorder". Deleting would throw away more than half the people and leave nobody healthy to learn from.</div>
+  <details><summary>What we'll type in Colab</summary>
+    <p><code>df.isnull().sum()</code> counts blanks. <code>fillna('None')</code> fills them.</p></details>
+</section>
+
+<section id="s4">
+  <h2>Step 3: Features and label</h2>
+  <p><b>Features (x)</b> are the clues. The <b>label (y)</b> is the answer we want to predict. Some columns should be thrown away. Sort every column.</p>
+  <div class="card scroll" id="fl"></div>
+  <div class="row"><button id="flcheck">Check my answers</button></div>
+  <div class="msg" id="flmsg"></div>
+  <div class="say">Memory trick: <b>x = what we know</b>, <b>y = what we want to find out</b>.</div>
+  <details><summary>What we'll type in Colab</summary>
+    <p><code>x = df.drop(columns=[...])</code> keeps the clues. <code>y = df[['Sleep Disorder']]</code> keeps the answer.</p></details>
+</section>
+
+<section id="s5">
+  <h2>Step 4: Turn words into numbers</h2>
+  <p>Computers only do maths, so words must become numbers. Don't write Nurse=1, Teacher=2: that creates a fake ranking. Instead, make a <b>yes/no (1/0) column for each category</b>. This is <b>one-hot encoding</b>.</p>
+  <div class="card scroll">
+    <div class="row"><button id="dfbtn">drop_first: OFF</button><span class="mute">Switch it and watch the table.</span></div>
+    <table id="oh"></table>
+    <div class="msg" id="ohmsg"></div>
+  </div>
+  <h2 style="margin-top:32px;font-size:1.3rem">Mapping the label</h2>
+  <p>The label also needs numbers:</p>
+  <div><span class="pill">None = 0</span><span class="pill">Insomnia = 1</span><span class="pill">Sleep Apnea = 2</span></div>
+  <div class="card"><b>Myth check:</b> Sleep Apnea is 2, Insomnia is 1. Does that mean Sleep Apnea is "twice as much"?
+    <div class="row" style="margin-top:8px"><button data-my="y">Yes</button><button data-my="n">No</button></div><div class="msg" id="mymsg"></div></div>
+  <details><summary>What we'll type in Colab</summary>
+    <p><code>pd.get_dummies(x, drop_first=True)</code> encodes the features. <code>y.map(label_mapping)</code> encodes the label.</p></details>
+</section>
+
+<section id="s6">
+  <h2>Step 5: Train/test split</h2>
+  <p>Like the cards activity: the model <b>studies</b> the training set, then takes a <b>final exam</b> on the testing set it has never seen. Each dot is one of the 374 people.</p>
+  <div class="card">
+    <label for="ts"><b>test_size</b> = <span id="tsv">20</span>%</label>
+    <input type="range" id="ts" min="10" max="40" step="5" value="20">
+    <div class="row"><button id="shuf">Shuffle</button><button id="rs">random_state=42: OFF</button></div>
+    <div class="dots" id="split"></div>
+    <div class="legend"><span><i class="d-train"></i>training</span><span><i class="d-test"></i>testing</span></div>
+    <div class="msg" id="splitmsg"></div>
+  </div>
+  <div class="say">With <code>random_state=42</code> on, the shuffle is the same every time, so everyone in class gets the same split. Any number works. 42 is just popular.</div>
+  <details><summary>What we'll type in Colab</summary>
+    <p><code>train_test_split(x, y, test_size=0.2, random_state=42)</code></p></details>
+</section>
+
+<section id="s7">
+  <h2>Recap quiz</h2>
+  <p>Five questions. Pick an answer to see why.</p>
+  <div id="quiz"></div>
+  <div class="msg" id="score"></div>
+  <div class="card">
+    <p><b>Data ready?</b> Now let's do it for real in Google Colab.</p>
+    <a class="btn" id="colab" href="#" target="_blank" rel="noopener">Open the Colab notebook</a>
+    <p class="mute" style="margin:14px 0 0">Coming in Part II: train the model and find out how good its guesses are.</p>
+  </div>
+</section>
+
+</main>
+<script>
+// TEACHER: paste your student Colab link here.
+const COLAB_URL = "#";
+document.getElementById("colab").href = COLAB_URL;
+const $ = s => document.querySelector(s);
+const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+
+// progress bar
+addEventListener("scroll", () => {
+  const h = document.documentElement;
+  $("#bar").style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + "%";
+});
+
+// Step 0: sort
+const items = [
+  ["An email that says YOU WON A PRIZE", "Spam", ["Spam", "Not spam"]],
+  ["A photo of a puppy", "Dog", ["Cat", "Dog"]],
+  ["Your face in front of your phone", "You", ["You", "Not you"]],
+  ["A person's sleep clues", "Sleep disorder?", ["Sleep disorder?", "Exact price"]]
+];
+const sortBox = $("#sort");
+items.forEach(([txt, ans, opts]) => {
+  const r = el("div", "q", "<b>" + txt + "</b>");
+  const b = el("div", "row"), m = el("span", "msg");
+  opts.forEach(o => { const bt = el("button", "", o); bt.onclick = () => {
+    const ok = o === ans; m.textContent = ok ? "Yes, that's a category." : "Hmm, which category fits?";
+    m.className = "msg " + (ok ? "good" : "bad"); }; b.append(bt); });
+  b.append(m); r.append(b); sortBox.append(r);
+});
+sortBox.prepend(el("p", "mute", "Tap the category a classifier would choose."));
+
+// Step 1: table
+const cols = [["Gender", "w"], ["Age", "n"], ["Occupation", "w"], ["Sleep hours", "n"], ["Stress (1-10)", "n"], ["BMI category", "w"]];
+const rows = [["Male", 27, "Engineer", 6.1, 6, "Overweight"], ["Female", 28, "Nurse", 5.9, 8, "Normal"], ["Male", 35, "Teacher", 7.4, 4, "Normal"], ["Female", 43, "Doctor", 6.5, 7, "Overweight"]];
+const tbl = $("#tbl");
+let h = "<tr>" + cols.map(c => "<th>" + c[0] + "</th>").join("") + "</tr>";
+rows.forEach(r => h += "<tr>" + r.map(v => "<td>" + v + "</td>").join("") + "</tr>");
+h += "<tr>" + cols.map((c, i) => `<td><button data-i="${i}" data-t="n">Number</button> <button data-i="${i}" data-t="w">Words</button></td>`).join("") + "</tr>";
+tbl.innerHTML = h;
+tbl.querySelectorAll("button").forEach(b => b.onclick = () => {
+  const i = +b.dataset.i, ok = cols[i][1] === b.dataset.t;
+  b.classList.toggle("on", ok);
+  $("#tblmsg").innerHTML = ok ? `<span class="good">Right: ${cols[i][0]} is ${b.dataset.t === "n" ? "a number" : "words"}.</span>` : `<span class="bad">Not quite. Look at the values in ${cols[i][0]}.</span>`;
+});
+
+// Step 2: missing
+const miss = $("#miss");
+function drawMiss(mode) {
+  miss.innerHTML = "";
+  const add = c => miss.append(el("i", c));
+  for (let i = 0; i < 219; i++) {
+    if (mode === "del") continue;
+    add(mode === "none" ? "d-non" : mode === "ins" ? "d-ins" : "d-blank");
+  }
+  for (let i = 0; i < 77; i++) add("d-ins");
+  for (let i = 0; i < 78; i++) add("d-apn");
+  const t = {
+    reset: "219 blank, 155 with a known disorder.",
+    del: "Only 155 people left. Everyone left has a disorder, so the computer never sees a healthy person. Bad idea.",
+    none: "374 people kept: 219 None, 77 Insomnia, 78 Sleep Apnea. This matches what the blanks mean.",
+    ins: "Now 296 people say Insomnia. That is made up and wrong."
+  };
+  $("#missmsg").textContent = t[mode];
+  $("#missmsg").className = "msg " + (mode === "none" ? "good" : mode === "reset" ? "" : "bad");
+}
+document.querySelectorAll("[data-m]").forEach(b => b.onclick = () => drawMiss(b.dataset.m));
+drawMiss("reset"); $("#missmsg").textContent = "Pick an option and watch the dots.";
+
+// Step 3: features/label
+const fcols = ["Person ID", "Gender", "Age", "Occupation", "Sleep Duration", "Quality of Sleep", "Physical Activity", "Stress Level", "BMI Category", "Blood Pressure", "Heart Rate", "Daily Steps", "Sleep Disorder"];
+const pick = {};
+const fl = $("#fl");
+fcols.forEach(c => {
+  const r = el("div", "row", `<span style="min-width:160px"><b>${c}</b></span>`);
+  [["x", "Feature"], ["y", "Label"], ["d", "Throw away"]].forEach(([k, n]) => {
+    const b = el("button", "", n);
+    b.onclick = () => { pick[c] = k; r.querySelectorAll("button").forEach(x => x.classList.remove("on")); b.classList.add("on"); };
+    r.append(b);
+  });
+  r.style.marginBottom = "6px"; fl.append(r);
+});
+$("#flcheck").onclick = () => {
+  const want = c => c === "Sleep Disorder" ? "y" : c === "Person ID" ? "d" : "x";
+  const wrong = fcols.filter(c => pick[c] !== want(c));
+  const m = $("#flmsg");
+  if (!wrong.length) { m.className = "msg good"; m.textContent = "Perfect! 1 label, 1 thrown away, 11 features."; return; }
+  m.className = "msg bad";
+  const c = wrong[0];
+  m.textContent = !pick[c] ? `Sort every column. "${c}" is still empty.` :
+    c === "Sleep Disorder" ? "Sleep Disorder is the answer we want to predict. That's the label." :
+    c === "Person ID" ? "Person ID is just a ticket number. It tells us nothing about sleep." :
+    `"${c}" is a useful clue about the person. It's a feature.`;
+};
+
+// Step 4: one-hot
+const occ = ["Nurse", "Teacher", "Engineer", "Nurse", "Teacher"];
+let dropFirst = false;
+function drawOH() {
+  const cats = ["Engineer", "Nurse", "Teacher"].slice(dropFirst ? 1 : 0);
+  let t = "<tr><th>Person</th><th>Occupation</th>" + cats.map(c => "<th>Occ_" + c + "</th>").join("") + "</tr>";
+  occ.forEach((o, i) => t += `<tr><td>${"ABCDE"[i]}</td><td>${o}</td>` + cats.map(c => "<td>" + (o === c ? 1 : 0) + "</td>").join("") + "</tr>");
+  $("#oh").innerHTML = t;
+  $("#ohmsg").textContent = dropFirst ? "Engineer column dropped. If both others are 0, the person must be an Engineer, so nothing is lost." : "Every row has exactly one 1. One column is repeated information.";
+}
+$("#dfbtn").onclick = e => { dropFirst = !dropFirst; e.target.textContent = "drop_first: " + (dropFirst ? "ON" : "OFF"); e.target.classList.toggle("on", dropFirst); drawOH(); };
+drawOH();
+document.querySelectorAll("[data-my]").forEach(b => b.onclick = () => {
+  const ok = b.dataset.my === "n", m = $("#mymsg");
+  m.className = "msg " + (ok ? "good" : "bad");
+  m.textContent = ok ? "Correct. The numbers are only names for three boxes, not scores." : "Not quite. 0, 1 and 2 are just names for the categories.";
+});
+
+// Step 5: split
+let seeded = false, seed = 42;
+function rng(s) { return () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296; }
+function drawSplit() {
+  const pct = +$("#ts").value; $("#tsv").textContent = pct;
+  const n = 374, nt = Math.ceil(n * pct / 100), r = seeded ? rng(seed) : Math.random;
+  const idx = [...Array(n).keys()];
+  for (let i = n - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; }
+  const test = new Set(idx.slice(0, nt));
+  const box = $("#split"); box.innerHTML = "";
+  for (let i = 0; i < n; i++) box.append(el("i", test.has(i) ? "d-test" : "d-train"));
+  $("#splitmsg").textContent = `Training: ${n - nt} people. Testing: ${nt} people.`;
+}
+$("#ts").oninput = drawSplit; $("#shuf").onclick = drawSplit;
+$("#rs").onclick = e => { seeded = !seeded; e.target.textContent = "random_state=42: " + (seeded ? "ON" : "OFF"); e.target.classList.toggle("on", seeded); drawSplit(); };
+drawSplit();
+
+// Quiz
+const qs = [
+  ["Which one is a classification task?", ["Predict the exact price of a house", "Decide if a photo shows a cat or a dog", "Predict tomorrow's temperature"], 1, "Classification picks a category. The others predict a number."],
+  ["In our project, what is the label?", ["Age", "Person ID", "Sleep Disorder"], 2, "The label is the answer we want to predict."],
+  ["Why do we fill blank Sleep Disorder cells with 'None'?", ["A blank means the person has no disorder", "Blanks are not allowed in Python", "To make the data bigger"], 0, "In this dataset a blank means no disorder, and deleting would lose over half the people."],
+  ["Why do we turn words like 'Nurse' into numbers?", ["Words use too much memory", "Computers only do maths", "Numbers look nicer"], 1, "Models do calculations, so everything must be numeric."],
+  ["Why keep a testing set hidden?", ["To check the model on data it has never seen", "To make training faster", "Because the data is wrong"], 0, "Like a final exam: it shows if the model really learned or just memorised."]
+];
+let got = 0, done = 0;
+qs.forEach(([q, o, a, why], n) => {
+  const d = el("div", "q", `<b>${n + 1}. ${q}</b>`), r = el("div", "row"), m = el("div", "msg");
+  let answered = false;
+  o.forEach((t, i) => { const b = el("button", "", t); b.onclick = () => {
+    if (answered) return; answered = true; done++;
+    const ok = i === a; if (ok) got++;
+    b.classList.add("on"); m.className = "msg " + (ok ? "good" : "bad");
+    m.textContent = (ok ? "Correct. " : "Not quite. ") + why;
+    if (done === qs.length) { $("#score").className = "msg good"; $("#score").textContent = `Your score: ${got} / ${qs.length}`; }
+  }; r.append(b); });
+  d.append(r, m); $("#quiz").append(d);
+});
+</script>
+</body>
+</html>
